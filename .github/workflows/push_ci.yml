@@ -32,7 +32,6 @@ jobs:
         KEY_ALIAS: test666
         KEY_PASSWORD: test666
       run: |
-        echo 'org.gradle.jvmargs=-Xmx3072m' >> gradle.properties
         chmod 777 *
         ./gradlew :app:assembleRelease
         rm keystore.jks
