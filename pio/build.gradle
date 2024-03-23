@@ -13,9 +13,19 @@ android {
         versionCode 202111141
         versionName "4.0.5"
     }
+    signingConfigs {
+            release {
+                storeFile file(System.getenv("KEYSTORE_PATH"))
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+                enableV2Signing true
+            }
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            signingConfig signingConfigs.release
         }
         release_mini {
             shrinkResources true
