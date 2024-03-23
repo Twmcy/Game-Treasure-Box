@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <group>
+        <text>
+            <title>注意：重启生效</title>
+            <slices>
+                <slice>扩展手机运行内存吧，重启生效，调整越大开机就会慢</slice>
+            </slices>
+        </text>
+    </group>
+    
+<group>
+
+<action interruptible="false">
+        <title>SWAP调整</title>
+        <summary sh="free2" />
+        <desc>空间大小</desc>
+        <param name="test6" desc="以MB单位" label="内存大小" max="10000000" min="1024"
+                required="required" type="int" />
+        <set>echo 正在调整
+        echo "swapoff
+        dd if=/dev/zero of=/data/swapfile bs=1M count=$test6
+        chmod 777 /data/swapfile
+        mkswap /data/swapfile
+        swapon /data/swapfile" >/data/swap.sh
+        echo 重启生效，调整越大开机就会慢</set>
+    </action>
+    
+    
+    <action>
+            <title>关闭Swap</title>
+            <desc></desc>
+            <set>echo swapoff>/data/swap.sh
+            echo 重启生效</set>
+        </action>
+        
+        
+    <action>
+            <title>删除swap配置</title>
+            <desc></desc>
+            <set>echo 重启生效
+            rm -rf /data/swap.sh
+            rm -rf /data/swapfile</set>
+        </action>
+        
+        
+    <!-- ZRAM调整操作 -->
+    <action interruptible="false">
+        <title>ZRAM调整</title>
+        <desc>空间大小</desc>
+        <param name="test6" desc="以MB单位" label="内存大小" max="10000000" min="1024" required="required" type="int" />
+        <set>
+            echo 正在设置文件
+            echo "#!/system/bin/sh
+stop zram
+swapoff /dev/block/zram0
+echo 1 > /sys/block/zram0/reset
+echo 6029 > /sys/block/zram0/disksize
+mkswap /dev/block/zram0
+swapon /dev/block/zram0
+" >/data/zram.sh
+        echo 重启生效，调整越大开机就会慢
+        </set>
+    </action>
+    <!-- zram操作 -->
+    <action>
+        <title>关闭zram</title>
+        <desc></desc>
+        <set>echo
+            lsof /dev/block/zram0
+            swapoff /dev/block/zram0 >/data/zram.sh
+        </set>
+    </action>
+    <!-- 关闭zram操作 -->
+    <action>
+        <title>删除zram配置</title>
+        <desc></desc>
+        <set>rm -rf /data/zram.sh
+        </set>
+    </action>
+        </group>

@@ -1,0 +1,13 @@
+cat <<Han
+<?xml version="1.0" encoding="UTF-8" ?>
+<items>
+
+    <text>
+        <slices>
+            <slice size="18" color="#FFFF0000">未能获取到ROOT权限，能用啥功能自己去玩吧</slice>
+        </slices>
+    </text>
+    <group>
+            <page title="OTG刷机" config-sh="cat $Pages/WearOS/main.sh" />
+    </group>
+Han

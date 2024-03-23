@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<group>
+
+  <action>
+        <title>开机打开应用</title>
+        <desc></desc>
+        <set>. ./start/main.sh</set>
+        <params>
+            <param name="package_name" type="app" multiple="true"/>
+        </params>
+    </action>
+</group>
