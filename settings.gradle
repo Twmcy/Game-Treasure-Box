@@ -1,2 +1,2 @@
-include ':app', ':krscript', ':common'
+include ':pio', ':krscript', ':common'
 
