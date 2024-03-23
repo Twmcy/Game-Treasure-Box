@@ -1,19 +1,29 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'stringfog'
+
+stringfog {
+    implementation 'com.github.megatronking.stringfog.xor.StringFogImpl'
+    enable true
+    fogPackages = ['com.projectkr.shell']
+    debug false
+}
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '32.0.0'
 
     defaultConfig {
-        resConfigs "zh"
         minSdkVersion 21
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
-        versionCode 202111141
-        versionName "4.0.5"
+        versionCode(Common.getversionCode(rootProject))
+        versionName "1.1.3" + (Common.getGitHeadRefsSuffix(rootProject))
     }
-    signingConfigs {
+
+    if (System.getenv("KEYSTORE_PATH") != null) {
+        signingConfigs {
             release {
                 storeFile file(System.getenv("KEYSTORE_PATH"))
                 storePassword System.getenv("KEYSTORE_PASSWORD")
@@ -21,21 +31,38 @@ android {
                 keyPassword System.getenv("KEY_PASSWORD")
                 enableV2Signing true
             }
+        }
     }
+
     buildTypes {
         release {
-            minifyEnabled true
-            signingConfig signingConfigs.release
-        }
-        release_mini {
             shrinkResources true
-            minifyEnabled = true
+            minifyEnabled true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                signingConfig signingConfigs.release
+            }
+            applicationVariants.all { variant ->
+                def suffix
+                if (variant.buildType.name == 'release') {
+                    suffix = 'release'
+                } else {
+                    suffix = 'debug'
+                }
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = "rootes.apk"
+                        output.outputFileName = fileName
+                    }
+                }
+            }
         }
     }
 }
 
-dependencies {
+dependencies {    
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -45,6 +72,14 @@ dependencies {
     implementation project(':common') // 添加依赖模块
     implementation project(':krscript') // 添加依赖模块
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'com.github.khirr:Android-Privacy-Policy:1.0.1'
+    implementation 'com.microsoft.appcenter:appcenter-analytics:4.4.3'
+    implementation 'com.microsoft.appcenter:appcenter-crashes:4.4.3'
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:4.3'
+    implementation 'com.github.megatronking.stringfog:xor:3.0.0'
+    implementation 'com.drakeet.about:about:2.5.1'
+    implementation 'com.google.code.gson:gson:2.8.9' // 或者你可以选择最新的版本
+    implementation 'com.drakeet.multitype:multitype:4.3.0'
 }
 repositories {
     mavenCentral()
